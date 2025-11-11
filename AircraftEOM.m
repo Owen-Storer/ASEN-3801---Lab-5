@@ -1,6 +1,7 @@
 function  xdot = AircraftEOM(time, aircraft_state, aircraft_surfaces, wind_inertial, aircraft_parameters)
 g = 9.81;
 h=1609.34;
+m = aircraft_parameters.m;
 
 x = aircraft_state(1);
 y = aircraft_state(2);
@@ -70,5 +71,6 @@ r_dot = (Gamma_7*p*q - Gamma_1*q*r) + (Gamma_4*L + Gamma_8*N);
 
 xdot = [x_dot; y_dot; z_dot; phi_dot; theta_dot; psi_dot; u_dot; v_dot; w_dot; p_dot; q_dot; r_dot];
 end
+
 
 

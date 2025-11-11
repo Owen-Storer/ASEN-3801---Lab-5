@@ -1,6 +1,6 @@
 function  xdot = AircraftEOM(time, aircraft_state, aircraft_surfaces, wind_inertial, aircraft_parameters)
 g = 9.81;
-
+h=1609.34;
 
 x = aircraft_state(1);
 y = aircraft_state(2);
@@ -15,11 +15,19 @@ p = aircraft_state(10);
 q = aircraft_state(11);
 r = aircraft_state(12);
 
-rho = stdatmo(z);
+I_x = aircraft_parameters.Ix;
+I_y = aircraft_parameters.Iy;
+I_z = aircraft_parameters.Iz;
+I_xz = aircraft_parameters.Ixz;
+
+rho = stdatmo(h-z);
 
 velocity = [u;v;w];
 rates = [p;q;r];
 [aero_forces, aero_moments] = AeroForcesAndMoments(aircraft_state, aircraft_surfaces, wind_inertial, rho, aircraft_parameters); 
+L = aero_moments(1);
+M = aero_moments(2);
+N = aero_moments(3);
 
 R_b2i = [ cos(theta)*cos(psi),  sin(phi)*sin(theta)*cos(psi) - cos(phi)*sin(psi),  cos(phi)*sin(theta)*cos(psi) + sin(phi)*sin(psi);
           cos(theta)*sin(psi),  sin(phi)*sin(theta)*sin(psi) + cos(phi)*cos(psi),  cos(phi)*sin(theta)*sin(psi) - sin(phi)*cos(psi);
@@ -37,9 +45,9 @@ phi_dot = TROC_angles(1);
 theta_dot = TROC_angles(2);
 psi_dot = TROC_angles(3);
 
-u_dot = (r*v - q*w) - g*sin(theta) + X/m; %define X (aerodyn force)
-v_dot = (p*w - r*u) - g*(cos(theta)*sin(phi) + Y/m;
-w_dot = (q*u - p*v) + g*(cos(theta)*cos(phi)) + Z/m;
+u_dot = (r*v - q*w) - g*sin(theta) + (aero_forces(1))/m; 
+v_dot = (p*w - r*u) - g*(cos(theta)*sin(phi)) + (aero_forces(2))/m;
+w_dot = (q*u - p*v) + g*(cos(theta)*cos(phi)) + (aero_forces(3))/m;
 
 Gamma_1 = 
 Gamma_2 = 
@@ -50,7 +58,9 @@ Gamma_6 =
 Gamma_7 = 
 Gamma_8 = 
 
-p_dot = ()
+p_dot = (Gamma_1*p*q - Gamma_2*q*r) + (Gamma_3*L + Gamma_4*N);
+q_dot = (Gamma_5*p*r - Gamma_6(p^2 - r^2)) + (M/I_y);
+r_dot = (Gamma_7*p*q - Gamma_1*q*r) + (Gamma_4*L + Gamma_8*N);
 
 
 

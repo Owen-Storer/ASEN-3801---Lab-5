@@ -49,14 +49,23 @@ u_dot = (r*v - q*w) - g*sin(theta) + (aero_forces(1))/m;
 v_dot = (p*w - r*u) - g*(cos(theta)*sin(phi)) + (aero_forces(2))/m;
 w_dot = (q*u - p*v) + g*(cos(theta)*cos(phi)) + (aero_forces(3))/m;
 
-Gamma_1 = 
-Gamma_2 = 
-Gamma_3 = 
-Gamma_4 = 
-Gamma_5 = 
-Gamma_6 = 
-Gamma_7 = 
-Gamma_8 = 
+% define moment of ineritas from aircraft_parameters
+I_x = aircraft_parameters.Ix; 
+I_y = aircraft_parameters.Iy; 
+I_z = aircraft_parameters.Iz; 
+I_xz = aircraft_parameters.Ixz;
+
+% define Gamma using moi
+Gamma = I_x * I_z - (I_xz^2);
+Gamma_1 = (I_xz * (I_x - I_y + Iz)) / Gamma;
+Gamma_2 = (I_z * (I_z - I_y) + (I_xz ^2)) / Gamma;
+Gamma_3 = I_z / Gamma; 
+Gamma_4 = I_xz / Gamma; 
+Gamma_5 = (I_z - I_x) / I_y;
+Gamma_6 = I_xz / I_y; 
+Gamma_7 = (I_x * (I_x - I_y)) + (I_xz ^ 2) / Gamma;
+Gamma_8 = I_x / Gamma;
+
 
 p_dot = (Gamma_1*p*q - Gamma_2*q*r) + (Gamma_3*L + Gamma_4*N);
 q_dot = (Gamma_5*p*r - Gamma_6(p^2 - r^2)) + (M/I_y);
@@ -66,3 +75,4 @@ r_dot = (Gamma_7*p*q - Gamma_1*q*r) + (Gamma_4*L + Gamma_8*N);
 
 xdot = [x_dot; y_dot; z_dot; phi_dot; theta_dot; psi_dot; u_dot; v_dot; w_dot; p_dot; q_dot; r_dot];
 end
+

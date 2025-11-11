@@ -15,11 +15,6 @@ p = aircraft_state(10);
 q = aircraft_state(11);
 r = aircraft_state(12);
 
-I_x = aircraft_parameters.Ix;
-I_y = aircraft_parameters.Iy;
-I_z = aircraft_parameters.Iz;
-I_xz = aircraft_parameters.Ixz;
-
 rho = stdatmo(h-z);
 
 velocity = [u;v;w];
@@ -75,4 +70,5 @@ r_dot = (Gamma_7*p*q - Gamma_1*q*r) + (Gamma_4*L + Gamma_8*N);
 
 xdot = [x_dot; y_dot; z_dot; phi_dot; theta_dot; psi_dot; u_dot; v_dot; w_dot; p_dot; q_dot; r_dot];
 end
+
 

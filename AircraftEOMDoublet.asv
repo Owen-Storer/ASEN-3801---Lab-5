@@ -1,0 +1,13 @@
+function xdot = AircraftEOMDoublet(time, aircraft_state, aircraft_surfaces, doublet_size,
+doublet_time, wind_inertial, aircraft_parameters)
+
+% Doublet Peacewis
+if t > 0 && t <= doublet_time
+    del_e = aircraft_surfaces(1) + doublet_size;
+elseif t > doublet_time && t <= 2*doublet_time
+    del_e = aircraft_surfaces(1) - doublet_size;
+elseif t > 2*doublet_time
+    del_e = aircraft_surfaces(1);
+end
+
+aircraft_surfaces(1) = del_e; %

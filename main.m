@@ -105,15 +105,13 @@ PlotAircraftSim(t3, aircraftStateArray3, control_input_array3, 'r');
 doublet_time = 0.25; % seconds 
 doublet_size = 15; % degrees 
 
-[t1,aircraftStateArrayDoublet] = ode45(@(t, var) AircraftEOMDoublet(t, var, u0_2, doublet_size, doublet_time, windInertial2, aircraft_parameters), [0,1800], x0_2);
-aircraftStateArrayDoublet = aircraftStateArrayDoublet'; % transpose for plotting 
+
+[t1,aircraftStateArrayDoublet2] = ode45(@(t, var) AircraftEOMDoublet(t, var, u0_2, doublet_size, doublet_time, windInertial2, aircraft_parameters), [0,1800], x0_2);
+aircraftStateArrayDoublet2 = aircraftStateArrayDoublet2'; % transpose for plotting 
 
 
 % plot output from ode45 
-PlotAircraftSim(t1, aircraftStateArrayDoublet, u0_2, 1, 'r');
-
-
-% FINDING NATURAL FREQUENCY AND DAMPING RATIO OF THE SHORT PERIOD RESPONSE 
+PlotAircraftSim(t1, aircraftStateArrayDoublet2, u0_2, 1, 'r');
 
 % find the two peaks used for finding natural frequency and damping ratio
 [peaks, locations] = findpeaks(aircraftStateArrayDoublet(5)); % short period mode is charactarized by fast change in pitch angle 
@@ -140,3 +138,41 @@ dampingRatio = logDecrement / sqrt(4 * (pi^2) + (logDecrement^2));
 
 dampedNatFreq = (2 * pi) / (time2 - time1);
 naturalFrequency = dampedNatFreq / sqrt(1 - dampingRatio^2);
+
+
+
+% repeat for phugoid
+% FINDING NATURAL FREQUENCY AND DAMPING RATIO OF THE PHUGOID RESPONSE 
+
+% find the two peaks used for finding natural frequency and damping ratio
+[peaks2, locations2] = findpeaks(aircraftStateArrayDoublet2(7)); % phugoid mode is charactarized by change in inertial velocity
+locationOfFirstPeak2 = 0; 
+
+for i = 1 : length(locations2)
+
+    if locations2(i) > 20 % assuming short period dies out by 20 seconds
+        locationOfFirstPeak2 = i; 
+    break;
+    end
+
+end
+
+% define the two peaks used for finding natural frequency and damping ratio
+peak1Phugoid = peaks(locationOfFirstPeak2);
+peak2Phugoid = peaks(locationOfFirstPeak2 + 1);
+
+time1Phugoid = locations2(locationOfFirstPeak2);
+time2Phugoid = locations2(locationOfFirstPeak2 + 1); 
+
+logDecrement2 = log(peak1Phugoid / peak2Phugoid);
+dampingRatioPhugoid = logDecrement2 / sqrt(4 * (pi^2) + (logDecrement2^2));
+
+dampedNatFreqPhugoid = (2 * pi) / (time2Phugoid - time1Phugoid);
+naturalFrequencyPhugoid = dampedNatFreqPhugoid / sqrt(1 - dampingRatioPhugoid^2);
+
+
+
+
+dampedNatFreq = (2 * pi) / (time2 - time1);
+naturalFrequency = dampedNatFreq / sqrt(1 - dampingRatio^2);
+

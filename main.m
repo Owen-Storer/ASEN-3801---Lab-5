@@ -93,4 +93,50 @@ u0_3 = [5; 2; -13; .3];            % 3 deg 1 rad
 control_input_array3 = repmat(u0_3, 1, length(t3));
 
 % plot output from ode45 
+
 PlotAircraftSim(t3, aircraftStateArray3, control_input_array3, 'r');
+
+
+
+
+%% PROBLEM 3 
+
+% givens 
+doublet_time = 0.25; % seconds 
+doublet_size = 15; % degrees 
+
+[t1,aircraftStateArrayDoublet] = ode45(@(t, var) AircraftEOMDoublet(t, var, u0_2, doublet_size, doublet_time, windInertial2, aircraft_parameters), [0,1800], x0_2);
+aircraftStateArrayDoublet = aircraftStateArrayDoublet'; % transpose for plotting 
+
+
+% plot output from ode45 
+PlotAircraftSim(t1, aircraftStateArrayDoublet, u0_2, 1, 'r');
+
+
+% FINDING NATURAL FREQUENCY AND DAMPING RATIO OF THE SHORT PERIOD RESPONSE 
+
+% find the two peaks used for finding natural frequency and damping ratio
+[peaks, locations] = findpeaks(aircraftStateArrayDoublet(5)); % short period mode is charactarized by fast change in pitch angle 
+locationOfFirstPeak = 0; 
+
+for i = 1 : length(locations)
+
+    if locations(i) > 0.5 % assuming short period starts after 0.5 seconds (according to lab doc and from the AircraftEOMDoublet function) 
+        locationOfFirstPeak = i; 
+    break;
+    end
+
+end
+
+% define the two peaks used for finding natural frequency and damping ratio
+peak1 = peaks(locationOfFirstPeak);
+peak2 = peaks(locationOfFirstPeak + 1);
+
+time1 = locations(locationOfFirstPeak);
+time2 = locations(locationOfFirstPeak + 1); 
+
+logDecrement = log(peak1 / peak2);
+dampingRatio = logDecrement / sqrt(4 * (pi^2) + (logDecrement^2));
+
+dampedNatFreq = (2 * pi) / (time2 - time1);
+naturalFrequency = dampedNatFreq / sqrt(1 - dampingRatio^2);

@@ -1,4 +1,4 @@
-function PlotAircraftSim(time, aircraft_state_array, control_input_array, col)
+function PlotAircraftSim(time, aircraft_state_array, control_input_array, fig, col)
 
 
 
@@ -65,13 +65,13 @@ xlabel("Time in [s]")
 ylabel("X Position in [m]")
 
 subplot(3,1,2)
-plot(time, Y_E, col);
+plot(time, Y_E);
 title("Inertial Y Position w.r.t time")
 xlabel("Time in [s]")
 ylabel("Y Position in [m]")
 
 subplot(3,1,3)
-plot(time, Z_E, col);
+plot(time, Z_E);
 title("Inertial Z Position w.r.t time")
 xlabel("Time in [s]")
 ylabel("Z Position in [m]")
@@ -81,19 +81,19 @@ ylabel("Z Position in [m]")
 % Plotting Euler Angles
 figure();
 subplot(3,1,1)
-plot(time, phi, col);
+plot(time, phi);
 title("Roll (phi) w.r.t time")
 xlabel("Time in [s]")
 ylabel("Phi in [radians]")
 
 subplot(3,1,2)
-plot(time, theta, col);
+plot(time, theta);
 title("Pitch (Theta) w.r.t time")
 xlabel("Time in [s]")
 ylabel("Theta in [radians]")
 
 subplot(3,1,3)
-plot(time, psi, col);
+plot(time, psi);
 title("Yaw (Psi) w.r.t time")
 xlabel("Time in [s]")
 ylabel("Psi in [radians]")
@@ -103,19 +103,20 @@ ylabel("Psi in [radians]")
 % Plotting Inertial Velocity in the body frame
 figure();
 subplot(3,1,1)
-plot(time, u_E, col);
+plot(time, u_E);
 title("U Inertial Velocity in Body Frame w.r.t Time")
 xlabel("Time in [s]")
 ylabel("U_E in [m/s]")
 
 subplot(3,1,2)
-plot(time, v_E, col);
+plot(time, v_E);
 title("V Inertial Velocity in Body Frame w.r.t Time")
 xlabel("Time in [s]")
 ylabel("V_E in [m/s]")
 
 subplot(3,1,3)
-plot(time, w_E, col);
+plot(time, w_E);
+yline(0, col)
 title("W Inertial Velocity in Body Frame w.r.t Time")
 xlabel("Time in [s]")
 ylabel("W_E in [m/s]")
@@ -125,19 +126,19 @@ ylabel("W_E in [m/s]")
 % Plot Angular velocities
 figure();
 subplot(3,1,1)
-plot(time, p, col);
+plot(time, p);
 title("Angular Velocity in I_B hat direction w.r.t Time")
 xlabel("Time in [s]")
 ylabel("Angular Velocity in [rad/s]")
 
 subplot(3,1,2)
-plot(time, q, col);
+plot(time, q);
 title("Angular Velocity in J_B hat direction w.r.t Time")
 xlabel("Time in [s]")
 ylabel("Angular Velocity in [rad/s]")
 
 subplot(3,1,3)
-plot(time, r, col);
+plot(time, r);
 title("Angular Velocity in K_B hat direction w.r.t Time")
 xlabel("Time in [s]")
 ylabel("Angular Velocity in [rad/s]")
@@ -148,25 +149,25 @@ ylabel("Angular Velocity in [rad/s]")
 
 figure();
 subplot(4,1,1)
-plot(time, elevator_deg, col)
+plot(time, elevator_deg)
 title("Elevator Control Angle vs. Time")
 xlabel("Time in [s]")
 ylabel("Elevator Angle [deg]")
 
 subplot(4,1,2)
-plot(time, aileron_deg, col)
+plot(time, aileron_deg)
 title("Aileron Control Angle vs. Time")
 xlabel("Time in [s]")
 ylabel("Aileron Angle [deg]")
 
 subplot(4,1,3)
-plot(time, rudder_deg, col)
+plot(time, rudder_deg)
 title("Rudder Control Angle vs. Time")
 xlabel("Time in [s]")
 ylabel("Rudder Angle [deg]")
 
 subplot(4,1,4)
-plot(time, thrustFraction, col)
+plot(time, thrustFraction)
 title("Thrust Fraction vs. Time")
 xlabel("Time in [s]")
 ylabel("Thrust Ratio [0->1]")
@@ -175,16 +176,13 @@ ylabel("Thrust Ratio [0->1]")
 
 % Plot 3D Graph of aircraft position w.r.t inertial frame
 figure();
-plot3(X_E, Y_E, Z_E, col);
-hold on
-plot3(X_E(1), Y_E(1), Z_E(1), 'g*') % plot start of path with green marker
-hold on
-plot3(X_E(end), Y_E(end), Z_E(end), 'r*') % plot end of path with red marker
-set(gca, 'ZDir', 'reverse');
+plot3(X_E, Y_E, Z_E);
+plot3(X_E(1), Y_E(1), Z_E(1), "g*") % plot start of path with green marker
+plot3(X_E(end), Y_E(end), Z_E(end), "r*") % plot end of path with red marker
 title("3D aircraft path expressed in body frame coordinates")
 xlabel("X_E position in [m]")
 ylabel("Y_E position in [m]")
 legend("Z_E position in [m]")
-
+zlim([0 5])
 
 end

@@ -29,7 +29,7 @@ p = aircraft_state(10);
 q = aircraft_state(11);
 r = aircraft_state(12);
 
-rho = stdatmo(h-z);
+rho = stdatmo(z-h);
 
 velocity = [u;v;w];
 rates = [p;q;r];
@@ -66,18 +66,18 @@ I_xz = aircraft_parameters.Ixz;
 
 % define Gamma using moi
 Gamma = I_x * I_z - (I_xz^2);
-Gamma_1 = (I_xz * (I_x - I_y + Iz)) / Gamma;
+Gamma_1 = (I_xz * (I_x - I_y + I_z)) / Gamma;
 Gamma_2 = (I_z * (I_z - I_y) + (I_xz ^2)) / Gamma;
 Gamma_3 = I_z / Gamma; 
 Gamma_4 = I_xz / Gamma; 
 Gamma_5 = (I_z - I_x) / I_y;
 Gamma_6 = I_xz / I_y; 
-Gamma_7 = (I_x * (I_x - I_y)) + (I_xz ^ 2) / Gamma;
+Gamma_7 = ((I_x * (I_x - I_y)) + (I_xz ^ 2)) / Gamma;
 Gamma_8 = I_x / Gamma;
 
 
 p_dot = (Gamma_1*p*q - Gamma_2*q*r) + (Gamma_3*L + Gamma_4*N);
-q_dot = (Gamma_5*p*r - Gamma_6(p^2 - r^2)) + (M/I_y);
+q_dot = (Gamma_5*p*r - Gamma_6*(p^2 - r^2)) + (M/I_y);
 r_dot = (Gamma_7*p*q - Gamma_1*q*r) + (Gamma_4*L + Gamma_8*N);
 
 

@@ -59,7 +59,7 @@ Gamma_3 = I_z / Gamma;
 Gamma_4 = I_xz / Gamma; 
 Gamma_5 = (I_z - I_x) / I_y;
 Gamma_6 = I_xz / I_y; 
-Gamma_7 = (I_x * (I_x - I_y)) + (I_xz ^ 2) / Gamma;
+Gamma_7 = ((I_x * (I_x - I_y)) + (I_xz ^ 2)) / Gamma;
 Gamma_8 = I_x / Gamma;
 
 

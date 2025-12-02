@@ -60,6 +60,8 @@ windInertial1 = wind_inertial(windAngles1);
 % call ode45 to simulate the equations of motion 
 [t1,aircraftStateArray] = ode45(@(t, var) AircraftEOM(t, var, u0_1, windInertial1, aircraft_parameters), [0,1800], x0_1);
 
+control_input_array = zeros(length(t1));
+
 % plot output from ode45 
 PlotAircraftSim(t1, aircraftStateArray, control_input_array, 1, 'r');
 

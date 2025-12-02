@@ -23,7 +23,6 @@ graphs are on, if == 0 then graphs are off
 ode45
 %}
 
-if graph_AC_sim == 1
 
 %% Devectorize necessary vectors
 
@@ -186,6 +185,4 @@ ylabel("Y_E position in [m]")
 legend("Z_E position in [m]")
 zlim([0 5])
 
-elseif graph_AC_sim == 0
-end
 end

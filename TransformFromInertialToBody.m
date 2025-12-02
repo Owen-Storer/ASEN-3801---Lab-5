@@ -1,4 +1,4 @@
-function [wind_body] = TransformFromInertialToBody(wind_inertial, aircraft_state)
+function wind_body = TransformFromInertialToBody(wind_inertial, aircraft_state)
 
 phi = aircraft_state(1);
 theta = aircraft_state(2);
@@ -10,8 +10,8 @@ R_b2i = [ cos(theta)*cos(psi),  sin(phi)*sin(theta)*cos(psi) - cos(phi)*sin(psi)
           -sin(theta),          sin(phi)*cos(theta),                               cos(phi)*cos(theta) ]; 
 
 % transpose 
-R_i2b = R_b2i';
+R_i2b = transpose(R_b2i);
 
-wind_body = wind_inertial .* R_i2b; 
+wind_body = R_i2b*wind_inertial; 
 
 end 

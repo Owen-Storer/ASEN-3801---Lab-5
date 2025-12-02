@@ -32,7 +32,7 @@ DCM_2 = RotationMatrix321(attitude_2);
 %} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% UPDATED BY MATTIAS 
 
@@ -48,8 +48,8 @@ ttwistor;
 V = [21;0;0]; % airspeed (m/s)
 h = 1609.34; % height (m)
 
-t1 = linspace(0,1800,1800); % define time span 
-x0_1 = zeros(1, 12)'; % initial conditions are all zero 
+%t1 = linspace(0,1800,1800); % define time span 
+x0_1 = [0; 0; -h; 0; 0; 0; 0; 0; 0; 0; 0; 0]; % initial conditions are all zero 
 u0_1 = zeros(1,4)'; % control surfaces are all zero 
 x0_1(7) = V(1); % inertial velocity in body x is set to airspeed 
 
@@ -57,11 +57,8 @@ x0_1(7) = V(1); % inertial velocity in body x is set to airspeed
 windAngles1 = WindAnglesFromVelocityBody(V); 
 windInertial1 = wind_inertial(windAngles1);
 
-% call AircraftEOM to find derivative of the statevector 
-xdot = AircraftEOM(t1, x0_1, u0_1, windInertial1, aircraft_parameters); 
-
 % call ode45 to simulate the equations of motion 
-[t1,aircraftStateArray] = ode45(xdot, [0,1800], x0_1);
+[t1,aircraftStateArray] = ode45(@(t, var) AircraftEOM(t, var, u0_1, windInertial1, aircraft_parameters), [0,1800], x0_1);
 
 % plot output from ode45 
 PlotAircraftSim(t1, aircraftStateArray, control_input_array, 1, 'r');

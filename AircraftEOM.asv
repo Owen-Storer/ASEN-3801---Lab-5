@@ -1,17 +1,4 @@
-function xdot = AircraftEOMDoublet(time, aircraft_state, aircraft_surfaces, doublet_size,doublet_time, wind_inertial, aircraft_parameters)
-
-% Doublet Peacewise
-if t > 0 && t <= doublet_time
-    del_e = aircraft_surfaces(1) + doublet_size;
-elseif t > doublet_time && t <= 2*doublet_time
-    del_e = aircraft_surfaces(1) - doublet_size;
-elseif t > 2*doublet_time
-    del_e = aircraft_surfaces(1);
-end
-
-aircraft_surfaces(1) = del_e; % Reading New Doublet Elevator Deflection 
-
-% Reading into regular aircraft EOM with new doublet angles
+function  xdot = AircraftEOM(time, aircraft_state, aircraft_surfaces, wind_inertial, aircraft_parameters)
 g = 9.81;
 h=1609.34;
 m = aircraft_parameters.m;
@@ -72,7 +59,7 @@ Gamma_3 = I_z / Gamma;
 Gamma_4 = I_xz / Gamma; 
 Gamma_5 = (I_z - I_x) / I_y;
 Gamma_6 = I_xz / I_y; 
-Gamma_7 = ((I_x * (I_x - I_y)) + (I_xz ^ 2)) / Gamma;
+Gamma_7 = (I_x * (I_x - I_y)) + (I_xz ^ 2) / Gamma;
 Gamma_8 = I_x / Gamma;
 
 
@@ -84,3 +71,6 @@ r_dot = (Gamma_7*p*q - Gamma_1*q*r) + (Gamma_4*L + Gamma_8*N);
 
 xdot = [x_dot; y_dot; z_dot; phi_dot; theta_dot; psi_dot; u_dot; v_dot; w_dot; p_dot; q_dot; r_dot];
 end
+
+
+

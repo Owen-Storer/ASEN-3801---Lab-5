@@ -106,17 +106,33 @@ doublet_time = 0.25; % seconds
 doublet_size = 15; % degrees 
 
 
-[t1,aircraftStateArrayDoublet2] = ode45(@(t, var) AircraftEOMDoublet(t, var, u0_2, doublet_size, doublet_time, windInertial2, aircraft_parameters), [0,1800], x0_2);
+[t4,aircraftStateArrayDoublet2] = ode45(@(t, var) AircraftEOMDoublet(t, var, u0_2, doublet_size, doublet_time, Vwind_inertial, aircraft_parameters), [0,3], x0_2);
 aircraftStateArrayDoublet2 = aircraftStateArrayDoublet2'; % transpose for plotting 
 
+% Calculating the doublet over time for the ode function
+control_input_array3 = repmat(u0_2.', length(t4),1);
+for i = 1:length(t4)
+    t = t4(i);
+    if t >= 0 && t <= doublet_time
+        del_e = control_input_array3(1) + deg2rad(doublet_size);
+    elseif t > doublet_time && t <= 2*doublet_time
+        del_e = control_input_array3(1) - deg2rad(doublet_size);
+    elseif t > 2*doublet_time
+        del_e = control_input_array3(1);
+    end
+    control_input_array3(i,1) = del_e;
+end
+
+aircraftStateArrayDoublet2 = aircraftStateArrayDoublet2';
 
 % plot output from ode45 
-PlotAircraftSim(t1, aircraftStateArrayDoublet2, u0_2, 1, 'r');
+PlotAircraftSim(t4, aircraftStateArrayDoublet2, control_input_array3, 'r');
 
-%{
 % find the two peaks used for finding natural frequency and damping ratio
-[peaks, locations] = findpeaks(aircraftStateArrayDoublet(5)); % short period mode is charactarized by fast change in pitch angle 
+[peaks, locations] = findpeaks(aircraftStateArrayDoublet2(5,:)); % short period mode is charactarized by fast change in pitch angle 
 locationOfFirstPeak = 0; 
+
+
 
 for i = 1 : length(locations)
 
@@ -134,14 +150,6 @@ peak2 = peaks(locationOfFirstPeak + 1);
 time1 = locations(locationOfFirstPeak);
 time2 = locations(locationOfFirstPeak + 1); 
 
-%}
-
-peak1 = aircraftStateArrayDoublet2(1,5);
-peak2 = max(aircraftStateArrayDoublet2(5));
-
-time1 = 0; 
-[time2, ~] = find(peak2);
-
 logDecrement = log(peak1 / peak2);
 dampingRatio = logDecrement / sqrt(4 * (pi^2) + (logDecrement^2));
 
@@ -154,7 +162,10 @@ naturalFrequency = dampedNatFreq / sqrt(1 - dampingRatio^2);
 % FINDING NATURAL FREQUENCY AND DAMPING RATIO OF THE PHUGOID RESPONSE 
 
 % find the two peaks used for finding natural frequency and damping ratio
-[peaks2, locations2] = findpeaks(aircraftStateArrayDoublet2(7)); % phugoid mode is charactarized by change in inertial velocity
+[t4,aircraftStateArrayDoublet2] = ode45(@(t, var) AircraftEOMDoublet(t, var, u0_2, doublet_size, doublet_time, Vwind_inertial, aircraft_parameters), [0,1800], x0_2);
+aircraftStateArrayDoublet2 = aircraftStateArrayDoublet2'; % transpose for plotting 
+
+[peaks2, locations2] = findpeaks(aircraftStateArrayDoublet2(7,:)); % phugoid mode is charactarized by change in inertial velocity
 locationOfFirstPeak2 = 0; 
 
 for i = 1 : length(locations2)
@@ -167,8 +178,8 @@ for i = 1 : length(locations2)
 end
 
 % define the two peaks used for finding natural frequency and damping ratio
-peak1Phugoid = peaks(locationOfFirstPeak2);
-peak2Phugoid = peaks(locationOfFirstPeak2 + 1);
+peak1Phugoid = peaks2(locationOfFirstPeak2);
+peak2Phugoid = peaks2(locationOfFirstPeak2 + 1);
 
 time1Phugoid = locations2(locationOfFirstPeak2);
 time2Phugoid = locations2(locationOfFirstPeak2 + 1); 
@@ -178,11 +189,3 @@ dampingRatioPhugoid = logDecrement2 / sqrt(4 * (pi^2) + (logDecrement2^2));
 
 dampedNatFreqPhugoid = (2 * pi) / (time2Phugoid - time1Phugoid);
 naturalFrequencyPhugoid = dampedNatFreqPhugoid / sqrt(1 - dampingRatioPhugoid^2);
-
-
-
-
-dampedNatFreq = (2 * pi) / (time2 - time1);
-naturalFrequency = dampedNatFreq / sqrt(1 - dampingRatio^2);
-
-

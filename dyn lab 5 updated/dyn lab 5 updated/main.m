@@ -104,17 +104,19 @@ doublet_size = 15; % degrees
 
 [t4,aircraftStateArrayDoublet2] = ode45(@(t, var) AircraftEOMDoublet(t, var, u0_2, doublet_size, doublet_time, Vwind_inertial, aircraft_parameters), [0,1800], x0_2);
 aircraftStateArrayDoublet2 = aircraftStateArrayDoublet2'; % transpose for plotting 
+
+% Calculating the doublet over time for the ode function
 control_input_array3 = repmat(u0_2.', length(t4),1);
 for i = 1:length(t4)
     t = t4(i);
-    if t > 0 && t <= doublet_time
-        del_e = control_input_array3(1) + doublet_size;
+    if t >= 0 && t <= doublet_time
+        del_e = control_input_array3(1) + deg2rad(doublet_size);
     elseif t > doublet_time && t <= 2*doublet_time
-        del_e = control_input_array3(1) - doublet_size;
+        del_e = control_input_array3(1) - deg2rad(doublet_size);
     elseif t > 2*doublet_time
         del_e = control_input_array3(1);
     end
-    control_input_array3(i,1);
+    control_input_array3(i,1) = del_e;
 end
 
 aircraftStateArrayDoublet2 = aircraftStateArrayDoublet2';

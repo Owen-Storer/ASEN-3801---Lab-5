@@ -124,6 +124,7 @@ aircraftStateArrayDoublet2 = aircraftStateArrayDoublet2';
 % plot output from ode45 
 PlotAircraftSim(t4, aircraftStateArrayDoublet2, control_input_array3, 'r');
 
+%{
 % find the two peaks used for finding natural frequency and damping ratio
 [peaks, locations] = findpeaks(aircraftStateArrayDoublet(5)); % short period mode is charactarized by fast change in pitch angle 
 locationOfFirstPeak = 0; 
@@ -143,6 +144,15 @@ peak2 = peaks(locationOfFirstPeak + 1);
 
 time1 = locations(locationOfFirstPeak);
 time2 = locations(locationOfFirstPeak + 1); 
+
+%}
+
+
+peak1 = aircraftStateArrayDoublet2(1,5);
+peak2 = max(aircraftStateArrayDoublet2(5));
+
+time1 = 0; 
+[time2, ~] = find(peak2);
 
 logDecrement = log(peak1 / peak2);
 dampingRatio = logDecrement / sqrt(4 * (pi^2) + (logDecrement^2));

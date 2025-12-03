@@ -101,27 +101,57 @@ PlotAircraftSim(t3, aircraftStateArray3, control_input_array3, 'r');
 doublet_time = 0.25; % seconds 
 doublet_size = 15; % degrees 
 
-
-[t4,aircraftStateArrayDoublet2] = ode45(@(t, var) AircraftEOMDoublet(t, var, u0_2, doublet_size, doublet_time, Vwind_inertial, aircraft_parameters), [0,1800], x0_2);
+% 3.1 Plotting
+[t4,aircraftStateArrayDoublet2] = ode45(@(t, var) AircraftEOMDoublet(t, var, u0_2, doublet_size, doublet_time, Vwind_inertial, aircraft_parameters), [0,3], x0_2);
 aircraftStateArrayDoublet2 = aircraftStateArrayDoublet2'; % transpose for plotting 
 
-for i = length(t4)
-    if t4 > 0 && t4 <= doublet_time
-        del_e = aircraft_surfaces(1) + doublet_size;
-    elseif t4 > doublet_time && t4 <= 2*doublet_time
-        del_e = aircraft_surfaces(1) - doublet_size;
+% Calculating the doublet over time for the ode function
+control_input_array3 = repmat(u0_2.', length(t4),1);
+for i = 1:length(t4)
+    t = t4(i);
+    if t >= 0 && t <= doublet_time
+        del_e = control_input_array3(1) + deg2rad(doublet_size);
+    elseif t > doublet_time && t <= 2*doublet_time
+        del_e = control_input_array3(1) - deg2rad(doublet_size);
     elseif t > 2*doublet_time
-        del_e = aircraft_surfaces(1);
+        del_e = control_input_array3(1);
     end
-    control_input_array2(i,1)
+    control_input_array3(i,1) = del_e;
 end
 
+aircraftStateArrayDoublet2 = aircraftStateArrayDoublet2';
 
 % plot output from ode45 
-PlotAircraftSim(t4, aircraftStateArrayDoublet2, u0_2, 1, 'r');
+PlotAircraftSim(t4, aircraftStateArrayDoublet2, control_input_array3, 'r');
+
+
+%3.2 Plotting
+[t5,aircraftStateArrayDoublet3] = ode45(@(t, var) AircraftEOMDoublet(t, var, u0_2, doublet_size, doublet_time, Vwind_inertial, aircraft_parameters), [0,100], x0_2);
+aircraftStateArrayDoublet3 = aircraftStateArrayDoublet3'; % transpose for plotting 
+
+% Calculating the doublet over time for the ode function
+control_input_array4 = repmat(u0_2.', length(t5),1);
+for i = 1:length(t5)
+    t = t5(i);
+    if t >= 0 && t <= doublet_time
+        del_e = control_input_array4(1) + deg2rad(doublet_size);
+    elseif t > doublet_time && t <= 2*doublet_time
+        del_e = control_input_array4(1) - deg2rad(doublet_size);
+    elseif t > 2*doublet_time
+        del_e = control_input_array4(1);
+    end
+    control_input_array4(i,1) = del_e;
+end
+
+aircraftStateArrayDoublet3 = aircraftStateArrayDoublet3';
+
+% plot output from ode45 
+PlotAircraftSim(t5, aircraftStateArrayDoublet3, control_input_array4, 'r');
+
+% -----------------------------------------------------------------------------------------------------------------------------------
 
 % find the two peaks used for finding natural frequency and damping ratio
-[peaks, locations] = findpeaks(aircraftStateArrayDoublet(5)); % short period mode is charactarized by fast change in pitch angle 
+[peaks, locations] = findpeaks(aircraftStateArrayDoublet2(5)); % short period mode is charactarized by fast change in pitch angle 
 locationOfFirstPeak = 0; 
 
 for i = 1 : length(locations)
